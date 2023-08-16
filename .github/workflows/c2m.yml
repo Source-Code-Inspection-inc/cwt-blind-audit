@@ -1,0 +1,33 @@
+name: C2M Scan
+
+on:
+  workflow_dispatch: # Manual execution
+
+jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo-1
+        uses: actions/checkout@master
+        with:
+          repository: Source-Code-Inspection-inc/dotnet-test
+          path: repos/repo-1
+          token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
+      - name: Checkout repo-2
+        uses: actions/checkout@master
+        with:
+          repository: Source-Code-Inspection-inc/CWT-reactJS-Sample
+          path: repos/repo-2
+          token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
+      - name: Download C2M
+        run: wget https://codewetrust-dist-staging.s3-us-west-2.amazonaws.com/CodeWeTrustRunner_linux.tar.gz && tar -xzf CodeWeTrustRunner_linux.tar.gz
+      - name: ECHO
+        run: for dir in ${PWD}/repos/*; do echo "$dir"; done
+      - name: Run C2M
+        run: for dir in ${PWD}/repos/*; do ./CodeWeTrustRunner $dir --product-name "${dir##*/}" --PipelineSettings:LicenseKey ${{ secrets.CWT_LICENSE_KEY }}; done
+      - name: Upload Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: CodeWeTrust.data.zip
+          path: CodeWeTrust.data
