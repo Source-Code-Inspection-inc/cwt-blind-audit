@@ -22,8 +22,6 @@ jobs:
           token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
       - name: Download C2M
         run: wget https://codewetrust-dist-staging.s3-us-west-2.amazonaws.com/CodeWeTrustRunner_linux.tar.gz && tar -xzf CodeWeTrustRunner_linux.tar.gz
-      - name: ECHO
-        run: for dir in ${PWD}/repos/*; do echo "$dir"; done
       - name: Run C2M
         run: for dir in ${PWD}/repos/*; do ./CodeWeTrustRunner $dir --product-name "${dir##*/}" --PipelineSettings:LicenseKey ${{ secrets.CWT_LICENSE_KEY }}; done
       - name: Upload Result
