@@ -12,13 +12,13 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: Source-Code-Inspection-inc/dotnet-test
-          path: repos/repo-1
+          path: repos/dotnet-test
           token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
       - name: Checkout repo-2
         uses: actions/checkout@master
         with:
           repository: Source-Code-Inspection-inc/CWT-reactJS-Sample
-          path: repos/repo-2
+          path: repos/reactJS-Sample
           token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
           fetch-depth: 0 # avoid shallow clone so that C2M can collect history and contributors.
       - name: Download C2M
