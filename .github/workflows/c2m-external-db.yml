@@ -1,0 +1,28 @@
+name: C2M External DB Scan
+
+on:
+  workflow_dispatch: # Manual execution
+
+jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo-1
+        uses: actions/checkout@master
+        with:
+          repository: Source-Code-Inspection-inc/dotnet-test
+          path: repos/repo-1
+          token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
+      - name: Checkout repo-2
+        uses: actions/checkout@master
+        with:
+          repository: Source-Code-Inspection-inc/CWT-reactJS-Sample
+          path: repos/repo-2
+          token: ${{ secrets.C2M_REPO_ACCESS_TOKEN }}
+      - name: Download C2M
+        run: wget https://codewetrust-dist-staging.s3-us-west-2.amazonaws.com/CodeWeTrustRunner_linux.tar.gz && tar -xzf CodeWeTrustRunner_linux.tar.gz
+      - name: Run C2M
+        env:
+          ConnectionStrings__CodeWeTrustDb: ${{ secrets.CWT_DB_CONNECTION_STRING }}
+        run: for dir in ${PWD}/repos/*; do ./CodeWeTrustRunner $dir --product-name "${dir##*/}" --PipelineSettings:LicenseKey ${{ secrets.CWT_LICENSE_KEY }}; done
